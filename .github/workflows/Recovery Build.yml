@@ -161,6 +161,18 @@ jobs:
       with:
         swap-size-gb: 12
 
+    - name: Fix Partition List Error (Inject system_dlkm & mi_ext)
+      run: |
+        if [ -f build/make/core/config.mk ]; then
+          echo "Modifying config.mk to include system_dlkm and mi_ext..."
+          sed -i 's/odm_dlkm/odm_dlkm system_dlkm mi_ext/g' build/make/core/config.mk
+          echo "Modification done! Checking current allowed list:"
+          grep "odm_dlkm" build/make/core/config.mk || true
+        else
+          echo "Error: build/make/core/config.mk not found! Double check path."
+        fi
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
     - name: Building recovery
       run: |
         source build/envsetup.sh
