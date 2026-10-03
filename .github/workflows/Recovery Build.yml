@@ -6,7 +6,7 @@ on:
       MANIFEST_URL:
         description: 'MANIFEST_URL (if want to use SSH keys, use git@github.com:XXXXX)'
         required: true
-        default: 'https://github.com'
+        default: 'https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp'
       MANIFEST_BRANCH:
         description: 'MANIFEST_BRANCH'
         required: true
@@ -14,7 +14,7 @@ on:
       DEVICE_TREE_URL:
         description: 'DEVICE_TREE_URL'
         required: true
-        default: 'https://github.com' # <-- আপনার ট্রির সঠিক লিংকটি এখানে সেট করা হয়েছে
+        default: 'https://github.com/TeamWin/android_device_asus_I003D'
       DEVICE_TREE_BRANCH:
         description: 'DEVICE_TREE_BRANCH'
         required: true
@@ -22,7 +22,7 @@ on:
       DEVICE_PATH:
         description: 'DEVICE_PATH'
         required: true
-        default: 'device/xiaomi/lake'
+        default: 'device/asus/I003D'
       COMMON_TREE_URL:
         description: 'COMMON_TREE_URL (if no common tree, leave blank)'
         required: false
@@ -32,11 +32,11 @@ on:
       DEVICE_NAME:
         description: 'DEVICE_NAME'
         required: true
-        default: 'lake'
+        default: 'I003D'
       MAKEFILE_NAME:
         description: 'MAKEFILE_NAME'
         required: true
-        default: 'twrp_lake'
+        default: 'twrp_I003D'
       BUILD_TARGET:
         description: 'BUILD_TARGET'
         required: true
@@ -98,7 +98,7 @@ jobs:
     - name: Install repo
       run: |
         mkdir ~/bin
-        curl https://googleapis.com > ~/bin/repo
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
         sudo ln -sf ~/bin/repo /usr/bin/repo
 
@@ -160,18 +160,6 @@ jobs:
       uses: pierotofy/set-swap-space@master
       with:
         swap-size-gb: 12
-
-    - name: Fix Partition List Error (Inject system_dlkm & mi_ext)
-      run: |
-        if [ -f build/make/core/config.mk ]; then
-          echo "Modifying config.mk to include system_dlkm and mi_ext..."
-          sed -i 's/odm_dlkm/odm_dlkm system_dlkm mi_ext/g' build/make/core/config.mk
-          echo "Modification done! Checking current allowed list:"
-          grep "odm_dlkm" build/make/core/config.mk || true
-        else
-          echo "Error: build/make/core/config.mk not found! Double check path."
-        fi
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Building recovery
       run: |
